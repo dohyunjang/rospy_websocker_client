@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QApplication, QPushButton, QTextEdit, QVBoxLayout, Q
 
 class ws_client(QObject):
     connect_signal = pyqtSignal(bool)
-
+    print("Flag1-1-1");
     def __init__(self, websocket_ip, port=9090, name ='', frame_id = "map"):
         super(ws_client,self).__init__()
         """
@@ -35,7 +35,7 @@ class ws_client(QObject):
         :param str websocket_ip: IP of the machine with the rosbridge server.
         :param int port: Port of the websocket server, defaults to 9090.
         """
-
+        print("Flag1-1-2. websocket_ip:",websocket_ip);
         self.name = websocket_ip if name == '' else name
         self._ip = websocket_ip
         self._port = port
