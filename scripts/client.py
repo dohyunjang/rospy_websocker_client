@@ -16,58 +16,50 @@ def ws_subscribe(_ws_client, topic_name, topic_type, topic_name_published):
   else:
     rospy.logerr("Unknwon topic type.")
 
+def string_cb(data, args):
+  ws_client = args[0]
+  give_topic_name = args[1]
+  ws_client.publish(give_topic_name, data)
 
-def ws_sub_node():
-  print "ws_sub_node"
-  rospy.init_node('listener',anonymous=True)
+def ws_client_node():
+  rospy.init_node('websocket_client',anonymous=True)
 
+  # Parsing parameters
   port = rospy.get_param('~port',3000)
   print "Flag1-1-1. port:",port
   address = rospy.get_param('~address','127.0.0.1')
   print "Flag1-1-2. address:",address
-  subscribe_topics = rospy.get_param('~subscribe_topics','')[1:-1].split(',')
+  server_pub_topics = rospy.get_param('~server_pub_topics','')[1:-1].split(',')
+  client_pub_topics = rospy.get_param('~client_pub_topics','')[1:-1].split(',')
 
-  # Websocket client
+# Websocket client
 #  ws_client = ros_ws.ws_client('192.168.1.3', 3000) # ip, port, name of client
-  ws_client = ros_ws.ws_client('147.47.91.124', 10) # ip, port, name of client
+#  ws_client = ros_ws.ws_client('147.47.91.124', 10) # ip, port, name of client
+  ws_client = ros_ws.ws_client(address, port) # ip, port, name of client
   
   # Server to client
-  for topic in subscribe_topics:
-    print "Flag1-1-3. subs_topic:",topic
-    topic_name = topic.split(':')[0]
+  for topic in server_pub_topics:
+    receive_topic_name = topic.split(':')[0]
     topic_type = topic.split(':')[1]
-    topic_name_published = topic.split(':')[2]
-    ws_subscribe(ws_client, topic_name, topic_type, topic_name_published)
-#    rospy.sleep(1)
-#    ws_client.subscribe(topic_name, topic_type, topic_name_published)
-#ws_client.subscribe('/listener', String(), '/listener')
-  msg = Twist()
-  rate = rospy.Rate(1);
-  ws_client.connect()
-#  rospy.spin()
-#  print "Flag1-1-5"
-  msg_index = 0
-  while not rospy.is_shutdown():
-    msg.linear.x = msg_index
-    ws_client.publish("/cmd_vel",msg)
-    msg_index = msg_index + 1.0
-#rospy.sleep(1)
-    rate.sleep()
+    give_topic_name = topic.split(':')[2]
+    ws_subscribe(ws_client, receive_topic_name, topic_type, give_topic_name)
 
-#def ws_pub_node():
-#  print "ws_pub_node"
-#  ws_client = ros_ws.ws_client('147.47.91.124', 10) # ip, port, name of client
-## Publish
-#  rate = rospy.Rate(10)
-#  msg = Twist()
-#  msg_index = 0
-#  ws_client.connect()
+  ws_client.connect()
+
+  # Client to server
+  for topic in client_pub_topics:
+    print "Flag1-1-3. subs_topic:",topic
+    receive_topic_name = topic.split(':')[0]
+    topic_type = topic.split(':')[1]
+    give_topic_name = topic.split(':')[2]
+    rospy.Subscriber(receive_topic_name,String,string_cb,(ws_client, give_topic_name))
+
+  rospy.spin()
 
 
 if __name__=="__main__":
   try:
-    ws_sub_node()
-#    ws_pub_node()
+    ws_client_node()
   except rospy.ROSInterruptException:
     print("Exception!")
     pass

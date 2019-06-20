@@ -2,9 +2,10 @@
 
 <launch>
   <node pkg="rospy_websocker_client" name="websocker_client" type="client.py" output="screen">
-    <param name="port" value="3000" />
+    <param name="port" value="10" />
     <param name="address" value="147.47.91.124" />
     <!--param name="subscribe_topics" value="[/listener:std_msgs/String:/listener_sub,/ppose:geometry_msgs/PoseStamped:/pose]" /-->
-    <param name="subscribe_topics" value="[/listener:std_msgs/String:/listener_sub]" />
+    <param name="server_pub_topics" value="[/server/client/msg:std_msgs/String:/server/client/msg_sub]" />
+    <param name="client_pub_topics" value="[/client/server/msg_pub:std_msgs/String:/client/server/msg]" />
   </node>
 </launch>

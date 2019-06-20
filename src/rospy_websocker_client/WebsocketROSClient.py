@@ -222,8 +222,6 @@ class ws_client(QObject):
             # Not advertised, so we advertise
             topic_type = ros_message._type
             self._advertise(topic_name, topic_type)
-#        print "Flag4-1-1. msg:",ros_message
-        print "Flag4-1-1. msg:"
         # Converting ROS message to a dictionary thru YAML
         ros_message_as_dict = yaml.load(ros_message.__str__())
         # Publishing
