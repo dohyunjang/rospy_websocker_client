@@ -106,7 +106,9 @@ class ws_client(QObject):
         self._advertise_dict = {}
 
         # subscribe to
+        print("Flag2-1-1. sub_list:",self.sub_list);
         for key in self.sub_list:
+            print("Flag2-1-2. sub_list.key:",key);
             self._subscribe(key,self.sub_list[key][0],self.sub_list[key][3],self.sub_list[key][4])
         self._runFlag = True
 
@@ -211,15 +213,21 @@ class ws_client(QObject):
             from sensor_msgs/LaserScan.
         """
         # First check if we already advertised the topic
-
+        print("Flag2-3-1");
         d = self._advertise_dict
+        print("Flag2-3-2. advertise_dict:",d);
         for k in d:
+            print("Flag2-3-3. k:",k);
             if d[k]['topic_name'] == topic_name:
                 # Already advertised, do nothing
+                print("Flag2-3-4. already advertised. break");
                 break
         else:
             # Not advertised, so we advertise
+            print("Flag2-3-5. advertise");
             topic_type = ros_message._type
+            print("Flag2-3-6. topic name:",topic_name);
+            print("Flag2-3-7. topic type:",topic_type);
             self._advertise(topic_name, topic_type)
         # Converting ROS message to a dictionary thru YAML
         ros_message_as_dict = yaml.load(ros_message.__str__())
@@ -227,7 +235,7 @@ class ws_client(QObject):
         self._publish(topic_name, ros_message_as_dict)
 
     def subscribe(self, topic_name, msgs_data, pub_topic_name ='', rate = 0,queue_length=0):
-
+        print("Flag2-2-1");
         if pub_topic_name == '':
             pub_topic_name = topic_name
 
