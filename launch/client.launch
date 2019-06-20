@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node pkg="rospy_websocker_client" name="websocker_client" type="client.py" output="screen">
+  </node>
+</launch>

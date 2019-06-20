@@ -26,7 +26,6 @@ def listener():
 
 if __name__=="__main__":
   try:
-    print("Try listener");
     listener()
   except:
     print("Exception!");

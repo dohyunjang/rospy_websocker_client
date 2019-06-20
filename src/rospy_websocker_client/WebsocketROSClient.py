@@ -27,7 +27,6 @@ from PyQt5.QtWidgets import QApplication, QPushButton, QTextEdit, QVBoxLayout, Q
 
 class ws_client(QObject):
     connect_signal = pyqtSignal(bool)
-    print("Flag1-1-1");
     def __init__(self, websocket_ip, port=9090, name ='', frame_id = "map"):
         super(ws_client,self).__init__()
         """
@@ -35,7 +34,7 @@ class ws_client(QObject):
         :param str websocket_ip: IP of the machine with the rosbridge server.
         :param int port: Port of the websocket server, defaults to 9090.
         """
-        print("Flag1-1-2. websocket_ip:",websocket_ip);
+        print "Flag1-1-1. websocket_ip:",websocket_ip,":",port;
         self.name = websocket_ip if name == '' else name
         self._ip = websocket_ip
         self._port = port
@@ -137,6 +136,7 @@ class ws_client(QObject):
         new_uuid = str(uuid4())
         self._advertise_dict[new_uuid] = {'topic_name': topic_name,
                                           'topic_type': topic_type}
+        print "Flag2-3-1. advertise_dict:",self._advertise_dict
         advertise_msg = {"op": "advertise",
                          "id": new_uuid,
                          "topic": topic_name,
@@ -213,21 +213,14 @@ class ws_client(QObject):
             from sensor_msgs/LaserScan.
         """
         # First check if we already advertised the topic
-        print("Flag2-3-1");
         d = self._advertise_dict
-        print("Flag2-3-2. advertise_dict:",d);
         for k in d:
-            print("Flag2-3-3. k:",k);
             if d[k]['topic_name'] == topic_name:
                 # Already advertised, do nothing
-                print("Flag2-3-4. already advertised. break");
                 break
         else:
             # Not advertised, so we advertise
-            print("Flag2-3-5. advertise");
             topic_type = ros_message._type
-            print("Flag2-3-6. topic name:",topic_name);
-            print("Flag2-3-7. topic type:",topic_type);
             self._advertise(topic_name, topic_type)
         # Converting ROS message to a dictionary thru YAML
         ros_message_as_dict = yaml.load(ros_message.__str__())
@@ -235,7 +228,6 @@ class ws_client(QObject):
         self._publish(topic_name, ros_message_as_dict)
 
     def subscribe(self, topic_name, msgs_data, pub_topic_name ='', rate = 0,queue_length=0):
-        print("Flag2-2-1");
         if pub_topic_name == '':
             pub_topic_name = topic_name
 
