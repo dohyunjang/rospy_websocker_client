@@ -17,7 +17,8 @@ def ws_subscribe(_ws_client, topic_name, topic_type, topic_name_published):
     rospy.logerr("Unknwon topic type.")
 
 
-def ws_client_node():
+def ws_sub_node():
+  print "ws_sub_node"
   rospy.init_node('listener',anonymous=True)
 
   port = rospy.get_param('~port',3000)
@@ -30,31 +31,43 @@ def ws_client_node():
 #  ws_client = ros_ws.ws_client('192.168.1.3', 3000) # ip, port, name of client
   ws_client = ros_ws.ws_client('147.47.91.124', 10) # ip, port, name of client
   
-  # Subscribe
+  # Server to client
   for topic in subscribe_topics:
     print "Flag1-1-3. subs_topic:",topic
     topic_name = topic.split(':')[0]
     topic_type = topic.split(':')[1]
     topic_name_published = topic.split(':')[2]
     ws_subscribe(ws_client, topic_name, topic_type, topic_name_published)
+#    rospy.sleep(1)
 #    ws_client.subscribe(topic_name, topic_type, topic_name_published)
 #ws_client.subscribe('/listener', String(), '/listener')
-  rospy.spin()
-
-# Publish
-  rate = rospy.Rate(10)
   msg = Twist()
-  msg_index = 0
+  rate = rospy.Rate(1);
   ws_client.connect()
-  while rospy.is_shutdown():
+#  rospy.spin()
+#  print "Flag1-1-5"
+  msg_index = 0
+  while not rospy.is_shutdown():
     msg.linear.x = msg_index
     ws_client.publish("/cmd_vel",msg)
-    msg_index = msg_index + 1
+    msg_index = msg_index + 1.0
+#rospy.sleep(1)
     rate.sleep()
+
+#def ws_pub_node():
+#  print "ws_pub_node"
+#  ws_client = ros_ws.ws_client('147.47.91.124', 10) # ip, port, name of client
+## Publish
+#  rate = rospy.Rate(10)
+#  msg = Twist()
+#  msg_index = 0
+#  ws_client.connect()
+
 
 if __name__=="__main__":
   try:
-    ws_client_node()
+    ws_sub_node()
+#    ws_pub_node()
   except rospy.ROSInterruptException:
     print("Exception!")
     pass

@@ -4,6 +4,7 @@
   <node pkg="rospy_websocker_client" name="websocker_client" type="client.py" output="screen">
     <param name="port" value="3000" />
     <param name="address" value="147.47.91.124" />
-    <param name="subscribe_topics" value="[/listener:std_msgs/String:/listener_sub,/ppose:geometry_msgs/PoseStamped:/pose]" />
+    <!--param name="subscribe_topics" value="[/listener:std_msgs/String:/listener_sub,/ppose:geometry_msgs/PoseStamped:/pose]" /-->
+    <param name="subscribe_topics" value="[/listener:std_msgs/String:/listener_sub]" />
   </node>
 </launch>
