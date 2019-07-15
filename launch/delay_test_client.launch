@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node pkg="rospy_websocker_client" name="websocker_client" type="client.py" output="screen">
+    <param name="port" value="10" />
+    <param name="address" value="147.47.91.124" />
+    <param name="server_pub_topics" value="[/server/client/test_packet:geometry_msgs/PoseStamped:/server/client/test_packet]" />
+    <param name="client_pub_topics" value="[/client/server/returned_packet:geometry_msgs/PoseStamped:/client/server/returned_packet]" />
+  </node>
+</launch>

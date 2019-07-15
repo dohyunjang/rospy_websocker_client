@@ -6,17 +6,37 @@ from geometry_msgs.msg import  PoseStamped
 import rospy
 from geometry_msgs.msg import Twist
 
-def ws_subscribe(_ws_client, topic_name, topic_type, topic_name_published):
+def ws_subscribe(_ws_client, server_pub_topic_name, topic_type, client_sub_topic_name):
   if topic_type=='std_msgs/String':
-    _ws_client.subscribe(topic_name,String(),topic_name_published)
+    _ws_client.subscribe(server_pub_topic_name,String(),client_sub_topic_name)
   elif topic_type=='geometry_msgs/Twist':
-    _ws_client.subscribe(topic_name,Twist(),topic_name_published)
+    _ws_client.subscribe(server_pub_topic_name,Twist(),client_sub_topic_name)
   elif topic_type=='geometry_msgs/PoseStamped':
-    _ws_client.subscribe(topic_name,PoseStamped(),topic_name_published)
+    _ws_client.subscribe(server_pub_topic_name,PoseStamped(),client_sub_topic_name)
+  else:
+    rospy.logerr("Unknwon topic type.")
+
+def ws_publish(_ws_client, client_pub_topic_name, topic_type, server_sub_topic_name):
+  if topic_type=='std_msgs/String':
+    rospy.Subscriber(client_pub_topic_name,String,string_cb,(_ws_client, server_sub_topic_name))
+  elif topic_type=='geometry_msgs/Twist':
+    rospy.Subscriber(client_pub_topic_name,Twist,twist_cb,(_ws_client, server_sub_topic_name))
+  elif topic_type=='geometry_msgs/PoseStamped':
+    rospy.Subscriber(client_pub_topic_name,PoseStamped,posestamped_cb,(_ws_client, server_sub_topic_name))
   else:
     rospy.logerr("Unknwon topic type.")
 
 def string_cb(data, args):
+  ws_client = args[0]
+  give_topic_name = args[1]
+  ws_client.publish(give_topic_name, data)
+
+def twist_cb(data, args):
+  ws_client = args[0]
+  give_topic_name = args[1]
+  ws_client.publish(give_topic_name, data)
+
+def posestamped_cb(data, args):
   ws_client = args[0]
   give_topic_name = args[1]
   ws_client.publish(give_topic_name, data)
@@ -39,20 +59,20 @@ def ws_client_node():
   
   # Server to client
   for topic in server_pub_topics:
-    receive_topic_name = topic.split(':')[0]
+    server_pub_topic_name = topic.split(':')[0]
     topic_type = topic.split(':')[1]
-    give_topic_name = topic.split(':')[2]
-    ws_subscribe(ws_client, receive_topic_name, topic_type, give_topic_name)
+    client_sub_topic_name = topic.split(':')[2]
+    ws_subscribe(ws_client, server_pub_topic_name, topic_type, client_sub_topic_name)
 
   ws_client.connect()
 
   # Client to server
   for topic in client_pub_topics:
-    print "Flag1-1-3. subs_topic:",topic
-    receive_topic_name = topic.split(':')[0]
+    client_pub_topic_name = topic.split(':')[0]
     topic_type = topic.split(':')[1]
-    give_topic_name = topic.split(':')[2]
-    rospy.Subscriber(receive_topic_name,String,string_cb,(ws_client, give_topic_name))
+    server_sub_topic_name = topic.split(':')[2]
+#    rospy.Subscriber(receive_topic_name,String,string_cb,(ws_client, give_topic_name))
+    ws_publish(ws_client, client_pub_topic_name, topic_type, server_sub_topic_name)
 
   rospy.spin()
 

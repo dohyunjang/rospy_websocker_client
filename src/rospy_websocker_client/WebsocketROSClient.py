@@ -34,7 +34,7 @@ class ws_client(QObject):
         :param str websocket_ip: IP of the machine with the rosbridge server.
         :param int port: Port of the websocket server, defaults to 9090.
         """
-        print "Flag1-1-1. websocket_ip:",websocket_ip,":",port;
+        print "Flag2-1-1. websocket_ip:",websocket_ip,":",port;
         self.name = websocket_ip if name == '' else name
         self._ip = websocket_ip
         self._port = port
@@ -105,9 +105,9 @@ class ws_client(QObject):
         self._advertise_dict = {}
 
         # subscribe to
-        print("Flag2-1-1. sub_list:",self.sub_list);
+#            print "Flag2-1-1. sub_list:",self.sub_list;
         for key in self.sub_list:
-            print("Flag2-1-2. sub_list.key:",key);
+#            print "Flag2-1-2. sub_list.key:",key;
             self._subscribe(key,self.sub_list[key][0],self.sub_list[key][3],self.sub_list[key][4])
         self._runFlag = True
 
